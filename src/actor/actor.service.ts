@@ -1,81 +1,81 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable, Logger } from '@nestjs/common';
 import { CreateActorDto } from './dto/create-actor.dto';
 import { UpdateActorDto } from './dto/update-actor.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
 
-
 @Injectable()
 export class ActorService {
+  private readonly logger = new Logger(ActorService.name);
 
-  constructor(private readonly PrismaService: PrismaService){}
+  constructor(private readonly prismaService: PrismaService) {}
 
   async create(createActorDto: CreateActorDto) {
-    const created = await this.PrismaService.actor.create({
-      data : createActorDto
-    })
-    
-    return created
+    const created = await this.prismaService.actor.create({
+      data: createActorDto,
+    });
+
+    return created;
   }
 
   async findAll() {
-    return await this.PrismaService.actor.findMany();
+    this.logger.log('findAll() is called');
+    return await this.prismaService.actor.findMany();
   }
 
   async findOne(id: number) {
-    const one = await this.PrismaService.actor.findUnique({
-      where: { actor_id: id }
-    })
+    const one = await this.prismaService.actor.findUnique({
+      where: { actor_id: id },
+    });
 
-    if(!one){
+    if (!one) {
       throw new BadRequestException({
-        message: 'Could not find actor with this id'
-      })
+        message: 'Could not find actor with this id',
+      });
     }
 
     return one;
   }
 
-
   async update(id: number, updateActorDto: UpdateActorDto) {
-    const existed = await this.PrismaService.actor.findUnique({
-      where : {
-        actor_id : id
-      }
-    })
-  
-    if(!existed){
-      throw new BadRequestException({
-        message : "Could not find actor with this id"
-      })
-    }
-  
-    const updated = await this.PrismaService.actor.update({
-      where : {
-        actor_id : id
+    const existed = await this.prismaService.actor.findUnique({
+      where: {
+        actor_id: id,
       },
-      data : updateActorDto
-    })
-  
-    return updated
+    });
+
+    if (!existed) {
+      throw new BadRequestException({
+        message: 'Could not find actor with this id',
+      });
+    }
+
+    const updated = await this.prismaService.actor.update({
+      where: {
+        actor_id: id,
+      },
+      data: updateActorDto,
+    });
+
+    return updated;
   }
 
   async remove(id: number) {
-    const existed = await this.PrismaService.actor.findUnique({
-      where : {
-        actor_id : id
-      }
-    })
-  
-    if(!existed){
+    const existed = await this.prismaService.actor.findUnique({
+      where: {
+        actor_id: id,
+      },
+    });
+
+    if (!existed) {
       throw new BadRequestException({
-        message : "Could not find actor with this id"
-      })
+        message: 'Could not find actor with this id',
+      });
     }
-  
-    await this.PrismaService.actor.delete({
-      where : {
-        actor_id : id
-      }
-    })
+
+    await this.prismaService.actor.delete({
+      where: {
+        actor_id: id,
+      },
+    });
   }
 }

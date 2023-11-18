@@ -1,4 +1,11 @@
+import { ApiProperty } from '@nestjs/swagger';
+
 export class CreateActorDto {
-    readonly first_name : string
-    readonly last_name: string
+  @ApiProperty({
+    description: 'first name of the actor',
+    example: 'Will',
+  })
+  readonly first_name: string;
+  @ApiProperty({ example: 'Smith' })
+  readonly last_name: string;
 }
